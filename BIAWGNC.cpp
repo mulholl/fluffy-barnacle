@@ -1,5 +1,7 @@
 #include "BIAWGNC.hpp"
 
+#include <iostream>
+
 /* Constructor 
 	Arguments:
 		std::minstd_rand0 &rng_inp - reference to the RNG to be used
@@ -7,7 +9,7 @@
 BIAWGNC::BIAWGNC(std::minstd_rand0 &rng_inp):rng(rng_inp)
 {
 	rng_max = rng.max();
-	dist = std::normal_distribution<float>(0.0,1.0);
+	dist = std::normal_distribution<float>(0.0, 1.0);
 }
 
 /* Simulate transmission over the channel
@@ -49,4 +51,8 @@ unsigned int BIAWGNC::useChannel(float *outVec, const size_t numEls, const float
 	return 0;
 }
 
-/* Change noise power to SNR in the above!!! */
+float BIAWGNC::EbN0_to_NoiseVar(const float EbN0_dB, const float CodeRate)
+{
+	float EbN0_linear = pow(10, EbN0_dB/10);
+	return 1 / (2 * CodeRate * EbN0_linear);
+}

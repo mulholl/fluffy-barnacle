@@ -73,14 +73,17 @@ int main(void)
 		channel3.useChannel(vec6, vec2, vecSize, EbN0_dB, CodeRate);
 		numErrs = BPSKDemod(vec2, vec3, vecSize);
 		cout << "\nEbN0_dB: " << EbN0_dB << "\nNumber of errors: " << numErrs << "\nBER: " << (float)(numErrs) / vecSize << endl;
+		cout << "EbN0_to_NoiseVar returns " << BIAWGNC::EbN0_to_NoiseVar(EbN0_dB, CodeRate) << endl;
 
-		channel4.set_noise(sqrt(1/ (2 * CodeRate * pow(10, EbN0_dB/10))));
+		channel4.set_noise(1/ (2 * CodeRate * pow(10, EbN0_dB/10)));
 		vec5 = channel4(vec4);
 		bitsout = vec5 < 0;
     	itpp::BERC berc;  // Counters for coded and uncoded BER
 		berc.count(bitsin, bitsout);
 		numErrs = berc.get_errors();
 		cout << "\nEbN0_dB: " << EbN0_dB << "\nNumber of errors: " << numErrs << "\nBER: " << berc.get_errorrate() << endl;
+		cout << "FB Noise Variance: " << 1 / (2 * CodeRate * pow(10, EbN0_dB/10)) << endl;
+		cout << "ITPP Noise Variance: " << channel4.get_noise() << endl;
 
 	}	
 	
