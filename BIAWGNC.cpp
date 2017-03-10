@@ -17,14 +17,17 @@ BIAWGNC::BIAWGNC(std::minstd_rand0 &rng_inp):rng(rng_inp)
 		const size_t numEls - the number of elements in each array (assumed to be correct)
 		const float noisePowerdB - the noise power in dB
  */
-void BIAWGNC::useChannel(const int *inVec, float *outVec, const size_t numEls, const float noisePowerdB)
+unsigned int BIAWGNC::useChannel(const int *inVec, float *outVec, const size_t numEls, const float EbN0_dB, const float CodeRate)
 {
-	float noisePower = pow(10, noisePowerdB/10);
+	float EbN0_linear = pow(10, EbN0_dB/10);
+	float noiseStdDev = sqrt(1 / (2 * CodeRate * EbN0_linear));
 
 	for (unsigned int i = 0; i < numEls; i++)
 	{
-		outVec[i] = inVec[i] + sqrt(noisePower) * dist(rng);
+		outVec[i] = inVec[i] + noiseStdDev * dist(rng);
 	}
+
+	return 0;
 }
 
 /* Simulate transmission over the channel using the all-zero codeword
@@ -33,14 +36,17 @@ void BIAWGNC::useChannel(const int *inVec, float *outVec, const size_t numEls, c
 		const size_t numEls - the number of elements in each array (assumed to be correct)
 		const float noisePowerdB - the noise power in dB
  */
-void BIAWGNC::useChannel(float *outVec, const size_t numEls, const float noisePowerdB)
+unsigned int BIAWGNC::useChannel(float *outVec, const size_t numEls, const float EbN0_dB, const float CodeRate)
 {
-	float noisePower = pow(10, noisePowerdB/10);
+	float EbN0_linear = pow(10, EbN0_dB/10);
+	float noiseStdDev = sqrt(1 / (2 * CodeRate * EbN0_linear));
 
 	for (unsigned int i = 0; i < numEls; i++)
 	{
-		outVec[i] = sqrt(noisePower) * dist(rng);
+		outVec[i] = 1 + noiseStdDev * dist(rng);
 	}
+
+	return 0;
 }
 
 /* Change noise power to SNR in the above!!! */
